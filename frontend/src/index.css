@@ -1,24 +1,24 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap');
 
 :root {
     --primary-font: 'Inter', sans-serif;
     --heading-font: 'Poppins', sans-serif;
     --accent: #2563eb;
-    --accent-light: #eff6ff;
-    --text-main: #111827;
-    --text-muted: #6b7280;
-    --surface: #ffffff;
-    --bg-main: #f9fafb;
-    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-    --card-shadow-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    --bg-main: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --card-radius: 24px;
+    --hero-radius: 32px;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 body {
     background-color: var(--bg-main);
     color: var(--text-main);
     font-family: var(--primary-font);
-    line-height: 1.7;
+    line-height: 1.8;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -29,107 +29,360 @@ h4,
 h5,
 h6 {
     font-family: var(--heading-font);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-main);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.25;
 }
 
-/* Shimmer Animation & Skeletons */
-.skeleton {
-    @apply bg-gray-200 rounded-xl relative overflow-hidden;
+/* Glass Navbar */
+header {
+    @apply backdrop-blur-xl bg-white/80 sticky top-0 z-[60] border-b border-gray-100 py-4 transition-all duration-300;
 }
 
-.shimmer::after {
-    content: "";
-    @apply absolute inset-0;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.5) 50%,
-            transparent 100%);
-    animation: shimmer 1.8s infinite;
+header a:not(.rounded-full) {
+    @apply relative font-bold text-sm text-slate-600 hover:text-blue-600 transition-colors duration-300 px-1 py-2;
 }
 
-@keyframes shimmer {
-    0% {
-        transform: translateX(-100%);
+header a:not(.rounded-full)::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300;
+}
+
+header a:not(.rounded-full):hover::after {
+    @apply w-full;
+}
+
+/* Hero Section Refinements */
+.hero-gradient {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.6) 40%, rgba(15, 23, 42, 0.95) 100%);
+}
+
+.hero-zoom {
+    @apply rounded-[var(--hero-radius)] shadow-2xl;
+    animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
 
-    100% {
-        transform: translateX(100%);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* Modern Card Overrides */
-.shadow-md {
-    box-shadow: var(--card-shadow) !important;
+.hero-zoom h1 {
+    @apply text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-tight;
 }
 
-.rounded-lg {
-    border-radius: 20px !important;
+.hero-zoom .badge-travel {
+    @apply bg-blue-600 text-white font-black px-5 py-2 rounded-full shadow-lg border-none;
 }
 
-.hover\:shadow-xl:hover {
-    box-shadow: var(--card-shadow-hover) !important;
-    transform: translateY(-6px);
+/* Home Card Category Badge (Gradient/Pill) */
+.badge-travel {
+    @apply absolute top-6 left-6 z-20 text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl backdrop-blur-md transition-all duration-300 border border-white/10;
 }
 
-.transition-shadow {
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+/* Main Home Blog Cards (2026 Tech Aesthetic) */
+.group.flex.flex-col {
+    @apply bg-white rounded-[32px] border border-slate-50 transition-all duration-400;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 20px 50px -20px rgba(0, 0, 0, 0.05);
 }
 
-/* Typography & Content Improvements */
+.group.flex.flex-col:hover {
+    @apply -translate-y-[10px] scale-[1.02] border-blue-100/50;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.12), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+}
+
+.card-image-wrap {
+    @apply overflow-hidden rounded-[24px] m-4 aspect-video relative;
+}
+
+.card-image-wrap img {
+    @apply transition-transform duration-1000 h-full w-full object-cover contrast-[1.05] brightness-[1.02];
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .card-image-wrap img {
+    @apply scale-110;
+}
+
+/* Content Container Adjustments */
+.flex.flex-col.flex-grow.px-2 {
+    @apply px-6 pb-6;
+}
+
+/* Typography Refinements */
+.group h2.text-2xl {
+    @apply text-slate-900 font-[800] leading-[1.2] mb-3;
+}
+
+.group p.text-gray-500 {
+    @apply text-slate-500 text-[13.5px] leading-[1.6] mb-6 font-medium;
+}
+
+/* Metadata Cleanup */
+.group .text-slate-500.mb-4 {
+    @apply text-[10px] font-bold text-slate-400 tracking-widest mb-4;
+}
+
+/* Footer Interaction Icons */
+.group .pt-6.mt-auto {
+    @apply border-none pt-4 bg-slate-50/50 -mx-6 -mb-6 px-6 pb-6 mt-0 rounded-b-[32px];
+}
+
+.group span.grayscale.opacity-70 {
+    @apply scale-[0.85] origin-left opacity-60 grayscale transition-all duration-300 hover:grayscale-0 hover:opacity-100 hover:text-blue-600;
+}
+
+/* Post Detail Context - Removing Card Layout */
+.pb-32>.max-w-4xl {
+    @apply bg-transparent rounded-none shadow-none -mt-0 pt-32 relative z-0;
+    max-width: 800px !important;
+}
+
 .prose {
-    font-size: 1.125rem !important;
+    font-size: 1.15rem !important;
     line-height: 1.8 !important;
-    color: #374151 !important;
+    color: #334155 !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    letter-spacing: -0.01em !important;
+}
+
+.prose p {
+    margin-bottom: 2.5rem;
+}
+
+.prose h2 {
+    @apply text-4xl font-black mt-20 mb-8 tracking-tighter;
+}
+
+.prose h3 {
+    @apply text-2xl font-black mt-12 mb-6 tracking-tight;
 }
 
 .prose blockquote {
-    @apply border-l-4 border-blue-600 pl-6 italic text-gray-700 bg-blue-50/30 py-4 rounded-r-lg;
-    margin: 2rem 0;
+    @apply border-l-4 border-blue-600 pl-10 py-4 italic text-2xl font-bold bg-slate-50/50 rounded-r-3xl my-16;
 }
 
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* Code Blocks for Tech Blog */
+.prose pre {
+    @apply bg-slate-900 text-slate-100 p-8 rounded-[24px] my-12 overflow-x-auto text-sm font-mono shadow-2xl;
 }
 
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.prose code:not(pre code) {
+    @apply bg-slate-100 text-blue-600 px-2 py-0.5 rounded-md font-bold text-base;
 }
 
-/* Component Styling */
-header {
-    @apply backdrop-blur-md bg-white/80 sticky top-0 z-50 border-b border-gray-100;
+/* Author Links in Cards */
+.group .text-slate-600.hover\:text-blue-600 {
+    @apply font-bold transition-colors duration-300;
 }
 
-header a {
-    @apply font-medium transition-colors hover:text-blue-600;
+/* Details Button Redesign */
+.details-btn::after {
+    content: '→';
+    @apply transition-transform duration-300 inline-block;
 }
 
-input,
-select,
-textarea {
-    @apply border-gray-200 focus:border-blue-500 transition-all;
+.details-btn:hover::after {
+    @apply translate-x-1;
 }
 
-button,
-.bg-blue-600 {
-    @apply transition-all duration-300 active:scale-95;
+.details-btn:hover {
+    @apply gap-4 px-7;
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
+
+button.text-red-500 {
+    @apply text-slate-400 font-bold hover:text-red-500;
+}
+
+/* Layout Spacing */
+.section-title {
+    @apply text-4xl font-black mb-16 tracking-tight flex items-center gap-6 mt-32;
+}
+
+.section-title::after {
+    content: '';
+    @apply h-px flex-grow bg-slate-100;
+}
+
+.grid {
+    @apply gap-x-10 gap-y-20;
+}
+
+/* Search & Filters */
+input[type="text"],
+select {
+    @apply border-slate-100 bg-slate-50 rounded-full px-8 py-4 text-sm font-bold tracking-tight transition-all duration-300 focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .hero-zoom h1 {
+        @apply text-4xl leading-tight;
+    }
+
+    .hero-zoom .flex.items-center.gap-6 {
+        @apply gap-3 text-[10px];
+    }
+
+    .section-title {
+        @apply text-2xl mb-10 mt-20;
+    }
+
     .prose {
-        font-size: 1rem !important;
+        font-size: 1.15rem !important;
     }
 
-    h1 {
-        @apply text-3xl;
+    .pb-32>.max-w-4xl {
+        @apply pt-20;
     }
+}
+
+/* Premium Animations */
+.animate-in {
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Shimmer & Skeleton System */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg,
+            rgba(241, 245, 249, 1) 25%,
+            rgba(226, 232, 240, 1) 50%,
+            rgba(241, 245, 249, 1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+.skeleton {
+    @apply bg-slate-100 rounded-lg overflow-hidden relative border border-slate-50;
+}
+
+.skeleton::after {
+    content: "";
+    @apply absolute inset-0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+/* Skeleton Layout Helpers */
+.skeleton-image {
+    @apply aspect-video rounded-[24px] mb-4;
+}
+
+.skeleton-title {
+    @apply h-8 w-3/4 mb-4 rounded-xl;
+}
+
+.skeleton-text {
+    @apply h-4 w-full mb-3 rounded-lg;
+}
+
+.skeleton-button {
+    @apply h-10 w-32 rounded-full;
+}
+
+
+/* Profile Page Specific Blog Cards (Scoped to Profile context) */
+.min-h-screen.pt-8 .grid .group {
+    @apply bg-white rounded-[24px] p-6 border border-slate-50 transition-all duration-500 ease-out;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.min-h-screen.pt-8 .grid .group:hover {
+    @apply -translate-y-2 scale-[1.01] border-blue-50;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+}
+
+.min-h-screen.pt-8 .grid .group .rounded-2xl {
+    @apply rounded-[18px] mb-4;
+}
+
+.min-h-screen.pt-8 .grid .group img {
+    @apply transition-transform duration-700;
+}
+
+.min-h-screen.pt-8 .grid .group:hover img {
+    @apply scale-105;
+}
+
+.min-h-screen.pt-8 .grid .group .text-black.font-bold {
+    @apply text-[10px] uppercase tracking-[0.2em] bg-slate-50 px-3 py-1 rounded-full;
+}
+
+.min-h-screen.pt-8 .grid .group h2 {
+    @apply text-2xl font-black mt-2 mb-3 tracking-tight;
+}
+
+.min-h-screen.pt-8 .grid .group p {
+    @apply text-slate-500 text-sm leading-relaxed mb-6;
+}
+
+/* Modern Rounded Pill Button on Profile */
+.min-h-screen.pt-8 .grid .group a.rounded-full.border-black {
+    @apply bg-slate-100 text-slate-900 border-none px-6 py-2.5 text-xs font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white shadow-sm flex items-center gap-2 transition-all;
+}
+
+.min-h-screen.pt-8 .grid .group a.rounded-full.border-black:hover {
+    @apply gap-4 px-7 shadow-lg;
+}
+
+/* Skeleton update for profile */
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+}
+
+/* Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
 }

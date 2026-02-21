@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
+import { UserContext } from "../context/UserContext";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function Register() {
     const [username, setUsername] = useState("");
@@ -8,6 +10,7 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const { setUserInfo } = useContext(UserContext);
 
     async function handleRegister(ev) {
         ev.preventDefault();
@@ -16,6 +19,19 @@ export default function Register() {
             navigate("/login");
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");
+        }
+    }
+
+    async function handleGoogleLogin(credentialResponse) {
+        try {
+            const res = await api.post("/auth/google", {
+                idToken: credentialResponse.credential
+            });
+            localStorage.setItem("token", res.data.token);
+            setUserInfo(res.data.user);
+            navigate("/");
+        } catch (err) {
+            setError(err.response?.data?.message || "Google registration failed");
         }
     }
 
@@ -64,6 +80,23 @@ export default function Register() {
                 <button className="w-full bg-black text-white font-bold p-3 rounded-lg hover:bg-gray-800 transition-colors mt-4">
                     Create Account
                 </button>
+                <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-100"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-4 text-gray-400 font-bold tracking-widest">Or continue with</span>
+                    </div>
+                </div>
+                <div className="flex justify-center">
+                    <GoogleLogin
+                        onSuccess={handleGoogleLogin}
+                        onError={() => setError("Google login failed")}
+                        useOneTap
+                        theme="outline"
+                        shape="pill"
+                    />
+                </div>
             </form>
             <p className="mt-8 text-center text-sm text-gray-500">
                 Already have an account? <Link to="/login" className="text-black font-bold hover:underline">Login here</Link>

@@ -1,6 +1,9 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (user) => {
     return jwt.sign(
@@ -168,5 +171,51 @@ export const getFollowing = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { idToken } = req.body;
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+
+        const { sub: googleId, email, name, picture } = ticket.getPayload();
+
+        let user = await User.findOne({
+            $or: [{ googleId }, { email }]
+        });
+
+        if (!user) {
+            // Create user for social login
+            user = new User({
+                username: name.replace(/\s+/g, '').toLowerCase() + Math.floor(Math.random() * 1000),
+                email,
+                googleId,
+                // password is not required due to the conditional requirement in User model
+            });
+            await user.save();
+        } else if (!user.googleId) {
+            // Link existing account to Google
+            user.googleId = googleId;
+            await user.save();
+        }
+
+        const token = generateToken(user);
+
+        res.json({
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                picture // Sending back picture if needed
+            }
+        });
+    } catch (error) {
+        console.error("Google Auth Error:", error);
+        res.status(401).json({ message: 'Google authentication failed' });
     }
 };

@@ -26,7 +26,7 @@ export default function TrendingPage() {
                 </div>
                 <div>
                     <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Trending Stories</h1>
-                    <p className="text-gray-500">The most engaging posts on MyBlog right now.</p>
+                    <p className="text-gray-500">The most engaging posts on BlogsVibes right now.</p>
                 </div>
             </div>
 

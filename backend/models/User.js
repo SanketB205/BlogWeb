@@ -18,8 +18,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () { return !this.googleId; }, // Required only if not a Google user
     minlength: 6
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // Allows multiple null values for users without googleId
   },
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
