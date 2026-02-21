@@ -148,3 +148,25 @@ export const toggleFollow = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+export const getFollowers = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId).populate('followers', 'username _id');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user.followers);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const getFollowing = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId).populate('following', 'username _id');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user.following);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

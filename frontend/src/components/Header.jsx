@@ -26,7 +26,7 @@ export default function Header() {
                         <Link to={`/profile/${userInfo.id || userInfo._id}`} className="text-gray-600 hover:text-black">
                             @{username}
                         </Link>
-                        <button onClick={logout} className="text-gray-600 hover:text-black">Logout</button>
+                        <button onClick={logout} className="text-red-600 font-semibold hover:text-red-700">Logout</button>
                     </>
                 ) : (
                     <>

@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import api from "../api";
 import { UserContext } from "../context/UserContext";
 import Pagination from "../components/Pagination";
+import UserListModal from "../components/UserListModal";
 
 export default function ProfilePage() {
     const { userId } = useParams();
@@ -14,6 +15,11 @@ export default function ProfilePage() {
     const [following, setFollowing] = useState(false);
     const [followersCount, setFollowersCount] = useState(0);
     const [followLoading, setFollowLoading] = useState(false);
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState('');
+    const [modalUsers, setModalUsers] = useState([]);
+    const [modalLoading, setModalLoading] = useState(false);
 
     const myId = userInfo?.id || userInfo?._id;
     const isOwnProfile = myId === userId;
@@ -64,6 +70,34 @@ export default function ProfilePage() {
         }
     }
 
+    async function showFollowers() {
+        setModalTitle('Followers');
+        setModalOpen(true);
+        setModalLoading(true);
+        try {
+            const res = await api.get(`/auth/users/${userId}/followers`);
+            setModalUsers(res.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setModalLoading(false);
+        }
+    }
+
+    async function showFollowing() {
+        setModalTitle('Following');
+        setModalOpen(true);
+        setModalLoading(true);
+        try {
+            const res = await api.get(`/auth/users/${userId}/following`);
+            setModalUsers(res.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setModalLoading(false);
+        }
+    }
+
     const username = profile?.username || '';
 
     return (
@@ -86,14 +120,22 @@ export default function ProfilePage() {
                         <p className="text-2xl font-bold text-gray-900">{posts.length}</p>
                         <p className="text-xs uppercase tracking-wider mt-0.5">Posts</p>
                     </div>
-                    <div className="text-center">
-                        <p className="text-2xl font-bold text-gray-900">{followersCount}</p>
+                    <button
+                        onClick={userInfo ? showFollowers : undefined}
+                        className={`text-center transition-all duration-200 ${userInfo ? 'hover:scale-105 active:scale-95 cursor-pointer' : 'cursor-default'}`}
+                        disabled={!userInfo}
+                    >
+                        <p className={`text-2xl font-bold ${userInfo ? 'text-blue-600' : 'text-gray-900'}`}>{followersCount}</p>
                         <p className="text-xs uppercase tracking-wider mt-0.5">Followers</p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-2xl font-bold text-gray-900">{profile?.followingCount ?? 0}</p>
+                    </button>
+                    <button
+                        onClick={userInfo ? showFollowing : undefined}
+                        className={`text-center transition-all duration-200 ${userInfo ? 'hover:scale-105 active:scale-95 cursor-pointer' : 'cursor-default'}`}
+                        disabled={!userInfo}
+                    >
+                        <p className={`text-2xl font-bold ${userInfo ? 'text-blue-600' : 'text-gray-900'}`}>{profile?.followingCount ?? 0}</p>
                         <p className="text-xs uppercase tracking-wider mt-0.5">Following</p>
-                    </div>
+                    </button>
                 </div>
 
                 {/* Follow / Unfollow button */}
@@ -212,6 +254,14 @@ export default function ProfilePage() {
                     </>
                 )}
             </div>
+
+            <UserListModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                title={modalTitle}
+                users={modalUsers}
+                loading={modalLoading}
+            />
         </div>
     );
 }
